@@ -1,0 +1,7 @@
+004.    Установить библиотеку pandas-ta ()
+005.    Проверить выгрузку исторических данных для yahoo finance
+004. V  Установить yahoo finance (pip install yfinance)
+003. V  Установить pandas (pip install pandas)
+002. V  Сделать пару простых запросов на получение данных
+001. V  Подключиться к API Binance (pip install binance-connector)
+000. V  Создать аккаунт на binance.com
