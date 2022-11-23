@@ -1,3 +1,4 @@
+005.    Проработать пример https://medium.com/geekculture/top-4-python-libraries-for-technical-analysis-db4f1ea87e09
 004. V  Установить библиотеку pandas-ta (pip install pandas_ta)
 005. V  Проверить выгрузку исторических данных для yahoo finance
 004. V  Установить yahoo finance (pip install yfinance)
