@@ -1,5 +1,5 @@
-004.    Установить библиотеку pandas-ta ()
-005.    Проверить выгрузку исторических данных для yahoo finance
+004. V  Установить библиотеку pandas-ta (pip install pandas_ta)
+005. V  Проверить выгрузку исторических данных для yahoo finance
 004. V  Установить yahoo finance (pip install yfinance)
 003. V  Установить pandas (pip install pandas)
 002. V  Сделать пару простых запросов на получение данных
