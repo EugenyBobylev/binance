@@ -10,10 +10,7 @@ def print_info(ticker: yf.Ticker):
             print(f'{key}: {val}')
 
 
-if __name__ == '__main__':
-    symbol = 'MSFT'
-    msft: yf.Ticker = yf.Ticker(symbol)
-    # print_info(msft)
+def print_history(ticker: yf.Ticker):
     df: pd.DataFrame = msft.history(period='1mo', interval="60m", start='2022-01-01', end='2022-02-01')
     with pd.option_context(
         'display.max_rows', None,
@@ -22,3 +19,10 @@ if __name__ == '__main__':
         'display.width', 1000
     ):
         print(df)
+
+
+if __name__ == '__main__':
+    symbol = 'MSFT'
+    msft: yf.Ticker = yf.Ticker(symbol)
+    # print_info(msft)
+    print_history(msft)
