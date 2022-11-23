@@ -15,16 +15,17 @@ def draw_first_plot():
 
 
 def draw_secont_plot(df: pd.DataFrame):
+    plt.rcParams["figure.figsize"] = (15, 5)
     df["Adj Close"].plot(title="Apple's stock in 2020")
     plt.show()
 
 
 def draw_bolinger_plot(df: pd.DataFrame):
+    plt.rcParams["figure.figsize"] = (15, 5)
     df = ta.bbands(df["Adj Close"], length=20, talib=False)
-    (
-        df[["BBL_20_2.0", "BBM_20_2.0", "BBU_20_2.0"]]
-        .plot(title="Bolinger Bands (pandas_ta)")
-    )
+
+    df_blg = df[["BBL_20_2.0", "BBM_20_2.0", "BBU_20_2.0"]]
+    df_blg.plot(title="Bolinger Bands (pandas_ta).")
     plt.show()
 
 
@@ -38,4 +39,4 @@ if __name__ == '__main__':
     _df: pd.DataFrame = yf.download("AAPL", start="2020-01-01", end="2021-12-31")
     draw_secont_plot(_df)
     draw_bolinger_plot(_df)
-    pta_print_indicators()
+    # pta_print_indicators()
