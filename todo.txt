@@ -1,9 +1,13 @@
-006.    Проработать пример https://medium.com/geekculture/top-4-python-libraries-for-technical-analysis-db4f1ea87e09
-005     установить библиотеку matplotlib (pip install matplotlib)
+23.11.2022
+009.
+008. V  Проработать пример https://medium.com/geekculture/top-4-python-libraries-for-technical-analysis-db4f1ea87e09
+006. V  Нарисовать первый график (draw first plot)
+005. V  Установить библиотеку matplotlib (pip install matplotlib)
 004. V  Установить библиотеку pandas-ta (pip install pandas_ta)
 005. V  Проверить выгрузку исторических данных для yahoo finance
 004. V  Установить yahoo finance (pip install yfinance)
 003. V  Установить pandas (pip install pandas)
+22.11.2022
 002. V  Сделать пару простых запросов на получение данных
 001. V  Подключиться к API Binance (pip install binance-connector)
 000. V  Создать аккаунт на binance.com
