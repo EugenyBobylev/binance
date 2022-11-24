@@ -1,8 +1,19 @@
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 import numpy as np
 import pandas as pd
 import pandas_ta as ta
 import yfinance as yf
+
+
+def print_data_frame(df: pd.DataFrame):
+    with pd.option_context(
+        'display.max_rows', None,
+        'display.max_columns', None,
+        'display.precision', 3,
+        'display.width', 1000
+    ):
+        print(df)
 
 
 def draw_first_plot():
@@ -14,7 +25,7 @@ def draw_first_plot():
     plt.show()
 
 
-def draw_secont_plot(df: pd.DataFrame):
+def draw_second_plot(df: pd.DataFrame):
     plt.rcParams["figure.figsize"] = (15, 5)
     df["Adj Close"].plot(title="Apple's stock in 2020")
     plt.show()
@@ -22,10 +33,13 @@ def draw_secont_plot(df: pd.DataFrame):
 
 def draw_bolinger_plot(df: pd.DataFrame):
     plt.rcParams["figure.figsize"] = (15, 5)
-    df = ta.bbands(df["Adj Close"], length=20, talib=False)
 
+    df = ta.bbands(df["Adj Close"], length=20, talib=False)
     df_blg = df[["BBL_20_2.0", "BBM_20_2.0", "BBU_20_2.0"]]
     df_blg.plot(title="Bolinger Bands (pandas_ta).")
+
+    x_data = pd.date_range('2020-01-01', periods=25, freq='MS')
+    plt.xticks(x_data)
     plt.show()
 
 
@@ -36,7 +50,16 @@ def pta_print_indicators():
 
 if __name__ == '__main__':
     # draw_first_plot()
-    _df: pd.DataFrame = yf.download("AAPL", start="2020-01-01", end="2021-12-31")
-    draw_secont_plot(_df)
+    _df: pd.DataFrame = yf.download("AAPL", start="2020-01-01", end="2022-01-01")
+    # draw_second_plot(_df)
+
+    # x_data = pd.date_range('2020-01-01', periods=25, freq='MS')
+    # print(x_data)
+
+    # print(_df)
+    # print(len(_df))
+    # print(_df.index.values.tolist())
+    # print(_df.loc['2020-01-02'])
+    # print_data_frame(_df)
     draw_bolinger_plot(_df)
     # pta_print_indicators()
