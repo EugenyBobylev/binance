@@ -81,7 +81,7 @@ class StrategyMacd:
         ax1.scatter(self.data.index, self.data['MACD_Buy_Signal_price'], color='green', marker='^', alpha=1)
         ax1.scatter(self.data.index, self.data['MACD_Sell_Signal_price'], color='red', marker='v', alpha=1)
         ax1.legend()
-        ax1.grid()
+        ax1.grid(True)
         ax1.set_xlabel('Date', fontsize=8)
 
         ax2.set_ylabel('MACD', fontsize=8)
@@ -90,7 +90,7 @@ class StrategyMacd:
         ax2.bar(self.data.index, 'MACDh_12_26_9', data=self.data, label='Volume',
                 color=self.data.positive.map({True: 'g', False: 'r'}), width=1, alpha=0.8)
         ax2.axhline(0, color='black', linewidth=0.5, alpha=0.5)
-        ax2.grid()
+        ax2.grid(True)
         plt.show()
 
 

@@ -39,6 +39,7 @@ def draw_bolinger_plot(df: pd.DataFrame):
     df_blg.plot(title="Bolinger Bands (pandas_ta).")
 
     x_data = pd.date_range('2020-01-01', periods=25, freq='MS')
+    plt.grid(True)
     plt.xticks(x_data)
     plt.show()
 
