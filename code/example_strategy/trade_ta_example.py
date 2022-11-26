@@ -1,5 +1,3 @@
-import math
-
 import numpy as np
 import pandas as pd
 import yfinance as yf
@@ -16,6 +14,64 @@ yf.pdr_override()
 def get_portfolio(symbol: str, start, end=date.today()):
     _data = yf.download(symbol, data_source='yahoo', start=start, end=end)
     return _data
+
+
+class StrategyBb:
+    def __init__(self, symbol, start, end):
+        self.symbol = symbol
+        self.start_date = start
+        self.end_date = end
+        self.data = get_portfolio(self.symbol, self.start_date, self.end_date)
+        self.prepare()
+
+    def prepare(self):
+        bb = ta.bbands(self.data['Adj Close'], length=20, std=2)
+        self.data = pd.concat([self.data, bb], axis=1).reindex(self.data.index)
+
+    def calculate(self):
+        self.data['bb_Buy_Signal_price'], self.data['bb_Sell_Signal_price'] = self.buy_sell()
+
+    def buy_sell(self):
+        signal_buy = []
+        signal_sell = []
+        position = False
+
+        for i in range(len(self.data)):
+            signal_buy.append(np.nan)
+            signal_sell.append(np.nan)
+
+            if not position and self.data['Adj Close'][i] < self.data['BBL_20_2.0'][i]:
+                signal_buy[-1] = self.data['Adj Close'][i]
+                position = True
+            elif position and self.data['Adj Close'][i] > self.data['BBU_20_2.0'][i]:
+                signal_sell[-1] = self.data['Adj Close'][i]
+                position = False  # To indicate that I actually went there
+
+        return pd.Series([signal_buy, signal_sell])
+
+    def visualization(self):
+        # plot
+        fig, ax1 = plt.subplots(figsize=(18, 8))
+        fig.suptitle(self.symbol, fontsize=10)
+        ax1.remove()
+        ax1 = plt.subplot2grid((14, 80), (0, 0), rowspan=8, colspan=100)
+        ax2 = plt.subplot2grid((14, 80), (10, 1), rowspan=6, colspan=79)
+
+        ax1.set_ylabel('Price in ₨')
+        ax1.plot(self.data['Adj Close'], label='Close Price', linewidth=0.5, color='blue')
+        ax1.scatter(self.data.index, self.data['bb_Buy_Signal_price'], color='green', marker='^', alpha=1)
+        ax1.scatter(self.data.index, self.data['bb_Sell_Signal_price'], color='red', marker='v', alpha=1)
+        ax1.legend()
+        ax1.grid(True)
+        ax1.set_xlabel('Date', fontsize=8)
+
+        ax2.plot(self.data['BBM_20_2.0'], label='Middle', linewidth=0.5, color='blue', alpha=0.75)  # middle band
+        ax2.plot(self.data['BBU_20_2.0'], label='Upper', linewidth=0.5, color='green', alpha=0.75)  # Upper band
+        ax2.plot(self.data['BBL_20_2.0'], label='Lower', linewidth=0.5, color='red', alpha=0.75)  # lower band
+        ax2.fill_between(self.data.index, self.data['BBL_20_2.0'], self.data['BBU_20_2.0'], alpha=0.1)
+        # ax2.legend(loc='upper left')
+        ax2.grid(True)
+        plt.show()
 
 
 class StrategyMacd:
@@ -73,24 +129,25 @@ class StrategyMacd:
         plt.rcParams.update({'font.size': 10})
         fig, ax1 = plt.subplots(figsize=(18, 8))
         fig.suptitle(self.symbol, fontsize=10)
-        ax1 = plt.subplot2grid((14, 8), (0, 0), rowspan=8, colspan=14)
+        ax1.remove()
+        ax1 = plt.subplot2grid((14, 80), (0, 0), rowspan=8, colspan=80)
+        ax2 = plt.subplot2grid((14, 80), (10, 1), rowspan=6, colspan=79)
 
-        ax2 = plt.subplot2grid((14, 12), (10, 0), rowspan=6, colspan=14)
         ax1.set_ylabel('Price in ₨')
         ax1.plot('Adj Close', data=self.data, label='Close Price', linewidth=0.5, color='blue')
         ax1.scatter(self.data.index, self.data['MACD_Buy_Signal_price'], color='green', marker='^', alpha=1)
         ax1.scatter(self.data.index, self.data['MACD_Sell_Signal_price'], color='red', marker='v', alpha=1)
         ax1.legend()
         ax1.grid(True)
-        ax1.set_xlabel('Date', fontsize=8)
 
-        ax2.set_ylabel('MACD', fontsize=8)
+        ax2.set_ylabel('MACD')
         ax2.plot('MACD_12_26_9', data=self.data, label='MACD', linewidth=0.5, color='blue')
         ax2.plot('MACDs_12_26_9', data=self.data, label='signal', linewidth=0.5, color='red')
         ax2.bar(self.data.index, 'MACDh_12_26_9', data=self.data, label='Volume',
                 color=self.data.positive.map({True: 'g', False: 'r'}), width=1, alpha=0.8)
         ax2.axhline(0, color='black', linewidth=0.5, alpha=0.5)
         ax2.grid(True)
+        # plt.grid()
         plt.show()
 
 
@@ -122,7 +179,7 @@ class StrategySma:
         return pd.Series([signal_buy, signal_sell])
 
     def visualization(self):
-        fig, ax = plt.subplots(figsize=(14, 8))
+        fig, ax = plt.subplots(figsize=(18, 8))
         ax.plot(self.data['Adj Close'], label=self.symbol, linewidth=1, color='blue', alpha=0.9, )
         ax.plot(self.data['SMA 30'], label='SMA30', linewidth=1.2, alpha=0.7)
         ax.plot(self.data['SMA 100'], label='SMA100', linewidth=1.2, alpha=0.7)
@@ -132,14 +189,13 @@ class StrategySma:
         ax.set_xlabel(f'{self.start_date} - {self.end_date}', fontsize=14)
         ax.set_ylabel('Close Price INR (₨)', fontsize=14)
         legend = ax.legend()
-        ax.grid()
+        ax.grid(True)
         plt.tight_layout()
         plt.show()
 
 
 def test_strategy_sma(symbol):
     strat = StrategySma(symbol, '2017-01-01', date.today())
-    print(strat.data)
     strat.visualization()
 
 
@@ -150,6 +206,14 @@ def test_strategy_macd(symbol):
     strat.visualization()
 
 
+def test_strategy_bb(symbol):
+    strat = StrategyBb(symbol, '2017-01-01', date.today())
+    strat.calculate()
+    strat.visualization()
+
+
 if __name__ == '__main__':
     _symbol = 'TATAMOTORS.NS'
+    test_strategy_sma(_symbol)
     test_strategy_macd(_symbol)
+    test_strategy_bb(_symbol)
