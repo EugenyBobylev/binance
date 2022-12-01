@@ -1,3 +1,7 @@
+01.12.2022
+016. V  построить график для данных binance (japanese candle)
+015. V  получить данные от binance futures и преобразовать их в формат pandas DataFrame
+
 # *******************************************************************************************************
 # проработать примеры использования pandas-ta из статьи
 # https://tradewithpython.com/generating-buy-sell-signals-using-python
