@@ -5,6 +5,8 @@ import numpy as np
 import pandas as pd
 import pandas_ta as ta
 import matplotlib.pyplot as plt
+import mplfinance as mpf
+# from mplfinance import candlestick_ohlc
 
 from binance.spot import Spot
 from binance.cm_futures import CMFutures
@@ -155,40 +157,32 @@ def ta_ao(data: pd.DataFrame, high_col_name: str, low_col_name, fast: int = 5, s
     return _ok
 
 
-def visualize_candles(data: pd.DataFrame):
-    plt.style.use('ggplot')
-    plt.figure(figsize=(18, 6))
-    up = data[data.close >= data.open]
-    down = data[data.close < data.open]
-    col1 = 'blue'
-    col2 = 'green'
+def vusualize_ohlc(data: pd.DataFrame):
+    # get OHLC data
+    ohlc: pd.DataFrame = df.loc[:, ['open_time', 'open', 'high', 'low', 'close', 'volume']]
+    ohlc.rename(columns={'open_time': 'Date', 'open': 'Open', 'high': 'High', 'low': 'Low', 'close': 'Close',
+                         'volume': 'Volume'},   inplace=True)
+    ohlc.index = pd.DatetimeIndex(ohlc['Date'])
 
-    # Setting width of candlestick elements
-    width = .3
-    width2 = .03
+    # CandleStick Layout, Styling
+    mc = mpf.make_marketcolors(
+        up='tab:blue', down='tab:red',
+        edge='black',
+        wick='inherit',
+        # wick={'up': 'blue', 'down': 'red'},
+        volume='silver',  # inherit
+    )
+    s = mpf.make_mpf_style(marketcolors=mc, gridaxis='both',)
 
-    # Plotting up prices of the stock
-    plt.bar(up.index, up.close - up.open, width, bottom=up.open, color=col1)
-    plt.bar(up.index, up.high - up.close, width2, bottom=up.close, color=col1)
-    plt.bar(up.index, up.low - up.open, width2, bottom=up.open, color=col1)
-
-    # Plotting down prices of the stock
-    plt.bar(down.index, down.close - down.open, width, bottom=down.open, color=col2)
-    plt.bar(down.index, down.high - down.open, width2, bottom=down.open, color=col2)
-    plt.bar(down.index, down.low - down.close, width2, bottom=down.close, color=col2)
-
-    # rotating the x-axis tick labels at 30degree towards right
-    plt.xticks(rotation=30, ha='right')
-
-    # displaying candlestick chart of stock data of a week
-    plt.show()
+    # plot and show
+    # mpf.plot(ohlc, type='candle', figsize=(18,8), volume=True, style=s)
+    mpf.plot(ohlc, type='candle', figsize=(18,8), volume=True, style='default')
+    mpf.show()
 
 
 if __name__ == '__main__':
-    df = load_futures_data('BTCUSD_PERP', interval='1h', limit=90)
-    # print(df.dtypes)
-    # print(df)
     start = datetime.now()
+    df = load_futures_data('BTCUSD_PERP', interval='1d', limit=90)
     ta_sma(df, 'close', 30)
     ta_sma(df, 'close', 100)
 
@@ -198,10 +192,6 @@ if __name__ == '__main__':
     ok, df = ta_macd(df, 'close', fast=1, slow=5, signal=9)
     ta_ao(df, 'high', 'low')
     stop = datetime.now()
-    # print_binance_data(raw_data)
-    # print_data_frame(df)
-    print(df)
-    # print(ok)
     print(stop - start)
 
-    visualize_candles(df)
+    vusualize_ohlc(df)
