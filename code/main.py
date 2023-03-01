@@ -180,9 +180,11 @@ def vusualize_ohlc(data: pd.DataFrame):
     mpf.show()
 
 
-if __name__ == '__main__':
+def main():
     start = datetime.now()
-    df = load_futures_data('BTCUSD_PERP', interval='1d', limit=90)
+    df = load_futures_data('BTCUSD_PERP', interval='1h', limit=180)
+    df.to_csv('data/btcusdt_1h_180.csv')
+
     ta_sma(df, 'close', 30)
     ta_sma(df, 'close', 100)
 
@@ -195,3 +197,10 @@ if __name__ == '__main__':
     print(stop - start)
 
     vusualize_ohlc(df)
+
+
+if __name__ == '__main__':
+    # df = pd.read_csv('data/btcusdt_1h_180.csv')
+    df = load_futures_data('BTCUSD_PERP', interval='1h', limit=180)
+    # ta_rsi(df, 'close', 6)
+    # print_data_frame(df)
